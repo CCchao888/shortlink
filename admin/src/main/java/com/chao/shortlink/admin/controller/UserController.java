@@ -1,5 +1,7 @@
 package com.chao.shortlink.admin.controller;
 
+import com.chao.shortlink.admin.common.convention.result.Result;
+import com.chao.shortlink.admin.common.convention.result.Results;
 import com.chao.shortlink.admin.dto.resp.UserRespDTO;
 import com.chao.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,13 @@ public class UserController {
      * 根据用户名获取用户信息
      */
     @GetMapping("/api/shortlink/v1/user/{username}")
-    public UserRespDTO getUserByUsername(@PathVariable("username") String username) {
-        return userService.getUserByUsername(username);
+    public Result<UserRespDTO> getUserByUsername(@PathVariable("username") String username) {
+        UserRespDTO result = userService.getUserByUsername(username);
+//        if(result == null){
+//            return new Result<UserRespDTO>().setCode(UserErrorCodeEnums.USER_NULL.code());
+//        }else {
+//            return Results.success(result);
+//        }
+        return Results.success(result);
     }
 }
