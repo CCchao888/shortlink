@@ -26,11 +26,6 @@ public class UserController {
     @GetMapping("/api/shortlink/v1/user/{username}")
     public Result<UserRespDTO> getUserByUsername(@PathVariable("username") String username) {
         UserRespDTO result = userService.getUserByUsername(username);
-//        if(result == null){
-//            return new Result<UserRespDTO>().setCode(UserErrorCodeEnums.USER_NULL.code());
-//        }else {
-//            return Results.success(result);
-//        }
         return Results.success(result);
     }
 }
