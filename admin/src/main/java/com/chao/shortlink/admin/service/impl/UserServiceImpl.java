@@ -42,20 +42,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public Boolean hasUsername(String username) {
-        return userRegisterCachePenetrationBloomFilter.contains(username);
+        return !userRegisterCachePenetrationBloomFilter.contains(username);
     }
 
 
     @Override
     public void register(UserRegisterReqDTO userRegisterReqDTO) {
-        if(hasUsername(userRegisterReqDTO.getUsername())){
+        if(!hasUsername(userRegisterReqDTO.getUsername())){
             throw new ClientException(UserErrorCodeEnums.USER_NAME_EXIST);
         }
+        // 保存用户记录
         int inserted = baseMapper.insert(BeanUtil.toBean(userRegisterReqDTO, UserDO.class));
         if(inserted < 1){
             throw new ClientException(UserErrorCodeEnums.USER_SAVE_ERROR);
         }
-
+        // 添加用户名到缓存中的布隆过滤器
+        userRegisterCachePenetrationBloomFilter.add(userRegisterReqDTO.getUsername());
 
     }
 }

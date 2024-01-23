@@ -29,7 +29,7 @@ public class UserController {
     }
 
     /**
-     * 根据用户名判断用户是否存在
+     * 根据用户名判断用户是否可用
      */
     @GetMapping("/api/short-link/v1/user/has-username")
     public Result<Boolean> hasUsername(@RequestParam("username") String username) {

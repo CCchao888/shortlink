@@ -6,19 +6,19 @@ package com.chao.shortlink.admin.dao.entity;
  * Description: 用户持久层实体
  */
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 @TableName("t_user")
 @Data
-public class UserDO  {
+public class UserDO  implements Serializable{
 
-//    @Serial   implements Serializable
-//    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     //@TableId(type = IdType.AUTO)
     /**
