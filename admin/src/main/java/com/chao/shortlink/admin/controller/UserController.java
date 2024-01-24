@@ -3,6 +3,7 @@ package com.chao.shortlink.admin.controller;
 import com.chao.shortlink.admin.common.convention.result.Result;
 import com.chao.shortlink.admin.common.convention.result.Results;
 import com.chao.shortlink.admin.dto.req.UserRegisterReqDTO;
+import com.chao.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.chao.shortlink.admin.dto.resp.UserRespDTO;
 import com.chao.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class UserController {
     }
 
     /**
-     * 根据用户名判断用户是否可用
+     * 判断用户名是否可用
      */
     @GetMapping("/api/short-link/v1/user/has-username")
     public Result<Boolean> hasUsername(@RequestParam("username") String username) {
@@ -42,6 +43,15 @@ public class UserController {
     @PostMapping("/api/short-link/v1/user")
     public Result<Void> register(@RequestBody UserRegisterReqDTO userRegisterReqDTO){
         userService.register(userRegisterReqDTO);
+        return Results.success();
+    }
+
+    /**
+     * 用户修改个人信息
+     */
+    @PutMapping("api/short-link/v1/user")
+    public Result<Void> update(@RequestBody UserUpdateReqDTO userUpdateReqDTO){
+        userService.update(userUpdateReqDTO);
         return Results.success();
     }
 

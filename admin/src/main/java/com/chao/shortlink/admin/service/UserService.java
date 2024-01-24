@@ -3,6 +3,7 @@ package com.chao.shortlink.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chao.shortlink.admin.dao.entity.UserDO;
 import com.chao.shortlink.admin.dto.req.UserRegisterReqDTO;
+import com.chao.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.chao.shortlink.admin.dto.resp.UserRespDTO;
 
 /**
@@ -20,7 +21,7 @@ public interface UserService extends IService<UserDO> {
     UserRespDTO getUserByUsername(String username);
 
     /**
-     * 查询用户名是否可用（存在）
+     * 判断用户名是否可用（存在）
      * @param username 用户名
      * @return true:存在 false:不存在
      */
@@ -31,5 +32,11 @@ public interface UserService extends IService<UserDO> {
      * @param userRegisterReqDTO 用户注册请求DTO
      */
     void register(UserRegisterReqDTO userRegisterReqDTO);
+
+    /**
+     * 用户修改个人信息
+     * @param userUpdateReqDTO 用户修改请求DTO
+     */
+    void update(UserUpdateReqDTO userUpdateReqDTO);
 
 }
