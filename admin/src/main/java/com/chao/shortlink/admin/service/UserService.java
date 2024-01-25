@@ -2,8 +2,10 @@ package com.chao.shortlink.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chao.shortlink.admin.dao.entity.UserDO;
+import com.chao.shortlink.admin.dto.req.UserLoginReqDTO;
 import com.chao.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.chao.shortlink.admin.dto.req.UserUpdateReqDTO;
+import com.chao.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.chao.shortlink.admin.dto.resp.UserRespDTO;
 
 /**
@@ -38,5 +40,12 @@ public interface UserService extends IService<UserDO> {
      * @param userUpdateReqDTO 用户修改请求DTO
      */
     void update(UserUpdateReqDTO userUpdateReqDTO);
+
+    /**
+     * 用户登录
+     * @param userLoginReqDTO 用户登录请求DTO
+     * @return 用户登录响应DTO（token）
+     */
+    UserLoginRespDTO login(UserLoginReqDTO userLoginReqDTO);
 
 }

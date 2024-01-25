@@ -2,8 +2,10 @@ package com.chao.shortlink.admin.controller;
 
 import com.chao.shortlink.admin.common.convention.result.Result;
 import com.chao.shortlink.admin.common.convention.result.Results;
+import com.chao.shortlink.admin.dto.req.UserLoginReqDTO;
 import com.chao.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.chao.shortlink.admin.dto.req.UserUpdateReqDTO;
+import com.chao.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.chao.shortlink.admin.dto.resp.UserRespDTO;
 import com.chao.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,15 @@ public class UserController {
     public Result<Void> update(@RequestBody UserUpdateReqDTO userUpdateReqDTO){
         userService.update(userUpdateReqDTO);
         return Results.success();
+    }
+
+    /**
+     * 用户登录
+     */
+    @PostMapping("api/short-link/v1/user/login")
+    public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO userLoginReqDTO){
+        UserLoginRespDTO userLoginRespDTO = userService.login(userLoginReqDTO);
+        return Results.success(userLoginRespDTO);
     }
 
 }
