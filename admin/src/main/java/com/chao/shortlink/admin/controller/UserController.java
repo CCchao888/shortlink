@@ -51,7 +51,7 @@ public class UserController {
     /**
      * 用户修改个人信息
      */
-    @PutMapping("api/short-link/v1/user")
+    @PutMapping("/api/short-link/v1/user")
     public Result<Void> update(@RequestBody UserUpdateReqDTO userUpdateReqDTO){
         userService.update(userUpdateReqDTO);
         return Results.success();
@@ -60,10 +60,18 @@ public class UserController {
     /**
      * 用户登录
      */
-    @PostMapping("api/short-link/v1/user/login")
+    @PostMapping("/api/short-link/v1/user/login")
     public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO userLoginReqDTO){
         UserLoginRespDTO userLoginRespDTO = userService.login(userLoginReqDTO);
         return Results.success(userLoginRespDTO);
+    }
+
+    /**
+     * 检查用户登录状态
+     */
+    @GetMapping("/api/short-link/v1/user/check-login")
+    public Result<Boolean> checkLogin(@RequestParam String username, @RequestParam String token){
+        return Results.success(userService.checkLogin(username,token));
     }
 
 }

@@ -106,9 +106,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (userDO == null){
             throw new ClientException("用户不存在");
         }
+        Boolean hasLogin = stringRedisTemplate.hasKey("login_"+userLoginReqDTO.getUsername());
+        if(hasLogin){
+            throw new ClientException("用户已登录");
+        }
         String uuid = UUID.randomUUID().toString();
         // 将token缓存到redis
-        stringRedisTemplate.opsForValue().set(uuid, JSON.toJSONString(userDO),2, TimeUnit.HOURS);
+        stringRedisTemplate.opsForHash().put("login_"+userLoginReqDTO.getUsername(),uuid, JSON.toJSONString(userDO));
+        stringRedisTemplate.expire("login_"+userLoginReqDTO.getUsername(), 2, TimeUnit.HOURS);
         return new UserLoginRespDTO(uuid);
+    }
+
+    @Override
+    public Boolean checkLogin(String username, String token) {
+        return stringRedisTemplate.opsForHash().get("login_"+username,token) != null;
     }
 }
