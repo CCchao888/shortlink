@@ -1,14 +1,18 @@
 package com.chao.shortlink.admin.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chao.shortlink.admin.dao.entity.GroupDO;
 import com.chao.shortlink.admin.dao.mapper.GroupMapper;
+import com.chao.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
 import com.chao.shortlink.admin.service.GroupService;
 import com.chao.shortlink.admin.toolkit.RandomStringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Author:chao
@@ -28,12 +32,13 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         }while (hasGid(gid));
         GroupDO groupDO = GroupDO.builder()
                 .gid(gid)
+                .sortOrder(0)
+                //TODO 设置用户名
                 .name(groupName)
                 .build();
         baseMapper.insert(groupDO);
 
     }
-
     private boolean hasGid(String gid){
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getGid, gid)
@@ -42,5 +47,17 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         GroupDO groupDO = baseMapper.selectOne(queryWrapper);
         return groupDO != null;
     }
+
+    @Override
+    public List<ShortLinkGroupRespDTO> listGroup() {
+        LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
+                .eq(GroupDO::getDelFlag, 0)
+                //TODO 从当前上下文获取用户名
+                .isNull(GroupDO::getUsername)
+                .orderByDesc(GroupDO::getSortOrder, GroupDO::getUsername);
+        List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
+        return BeanUtil.copyToList(groupDOList, ShortLinkGroupRespDTO.class);
+    }
+
 
 }
