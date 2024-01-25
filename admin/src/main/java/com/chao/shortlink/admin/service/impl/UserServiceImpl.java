@@ -90,6 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void update(UserUpdateReqDTO userUpdateReqDTO) {
         // TODO 验证当前用户名是否为登录用户，防止当前用户修改了其他用户的信息
+
         LambdaUpdateWrapper<UserDO> updateWrappers = Wrappers.lambdaUpdate(UserDO.class)
                 .eq(UserDO::getUsername, userUpdateReqDTO.getUsername());
         baseMapper.update(BeanUtil.toBean(userUpdateReqDTO, UserDO.class),updateWrappers);
