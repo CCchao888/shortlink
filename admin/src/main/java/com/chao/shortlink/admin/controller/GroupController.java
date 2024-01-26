@@ -3,6 +3,7 @@ package com.chao.shortlink.admin.controller;
 import com.chao.shortlink.admin.common.convention.result.Result;
 import com.chao.shortlink.admin.common.convention.result.Results;
 import com.chao.shortlink.admin.dto.req.ShortLinkGroupSaveReqDTO;
+import com.chao.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import com.chao.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
 import com.chao.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
 import com.chao.shortlink.admin.service.GroupService;
@@ -63,5 +64,17 @@ public class GroupController {
          groupService.deleteGroup(gid);
          return Results.success();
      }
+
+     /**
+      * 分组排序
+      * @param shortLinkGroupSortReqDTO
+      * @return
+      */
+     @PostMapping("/api/short-link/v1/group/sort")
+    public Result<Void> sort(@RequestBody List<ShortLinkGroupSortReqDTO> shortLinkGroupSortReqDTO){
+         groupService.sortGroup(shortLinkGroupSortReqDTO);
+         return Results.success();
+
+    }
 
 }
