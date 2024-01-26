@@ -53,4 +53,15 @@ public class GroupController {
         return Results.success();
     }
 
+    /**
+     * 删除分组
+     * @param gid
+     * @return
+     */
+     @DeleteMapping("/api/short-link/v1/group")
+     public Result<Void> delete(@RequestParam("gid") String gid){
+         groupService.deleteGroup(gid);
+         return Results.success();
+     }
+
 }

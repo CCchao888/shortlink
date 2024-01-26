@@ -32,4 +32,10 @@ public interface GroupService extends IService<GroupDO> {
      */
     void updateGroup(ShortLinkGroupUpdateReqDTO shortLinkGroupUpdateReqDTO);
 
+    /**
+     * 删除分组
+     * @param gid
+     */
+    void deleteGroup(String gid);
+
 }
