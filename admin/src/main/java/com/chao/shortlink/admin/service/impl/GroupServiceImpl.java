@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.chao.shortlink.admin.common.biz.user.UserContext;
 import com.chao.shortlink.admin.dao.entity.GroupDO;
 import com.chao.shortlink.admin.dao.mapper.GroupMapper;
 import com.chao.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
@@ -33,7 +34,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         GroupDO groupDO = GroupDO.builder()
                 .gid(gid)
                 .sortOrder(0)
-                //TODO 设置用户名
+                .username(UserContext.getUsername())
                 .name(groupName)
                 .build();
         baseMapper.insert(groupDO);
@@ -42,8 +43,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     private boolean hasGid(String gid){
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getGid, gid)
-                //TODO 设置用户名
-                .eq(GroupDO::getUsername, null);
+                .eq(GroupDO::getUsername, UserContext.getUsername());
         GroupDO groupDO = baseMapper.selectOne(queryWrapper);
         return groupDO != null;
     }
@@ -52,8 +52,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     public List<ShortLinkGroupRespDTO> listGroup() {
         LambdaQueryWrapper<GroupDO> queryWrapper = Wrappers.lambdaQuery(GroupDO.class)
                 .eq(GroupDO::getDelFlag, 0)
-                //TODO 从当前上下文获取用户名
-                .isNull(GroupDO::getUsername)
+                .eq(GroupDO::getUsername, UserContext.getUsername())
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUsername);
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
         return BeanUtil.copyToList(groupDOList, ShortLinkGroupRespDTO.class);
