@@ -1,12 +1,17 @@
 package com.chao.shortlink.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chao.shortlink.project.common.convention.exception.ServiceException;
 import com.chao.shortlink.project.dao.entity.ShortLinkDO;
 import com.chao.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.chao.shortlink.project.dto.req.ShortLinkCreateReqDTO;
+import com.chao.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
+import com.chao.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.chao.shortlink.project.service.ShortLinkService;
 import com.chao.shortlink.project.toolkit.HashUtil;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +53,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 .fullShortUrl(shortLinkDO.getFullShortUrl())
                 .build();
     }
+
     private String generateSuffix(ShortLinkCreateReqDTO shortLinkCreateReqDTO){
         int customGenerateCount = 0;
         String shortUri;
@@ -64,5 +70,17 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             customGenerateCount++;
         }
         return shortUri;
+    }
+
+
+    @Override
+    public IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkPageReqDTO shortLinkPageReqDTO) {
+        LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
+                .eq(ShortLinkDO::getGid, shortLinkPageReqDTO.getGid())
+                .eq(ShortLinkDO::getEnableStatus, 0)
+                .eq(ShortLinkDO::getDelFlag, 0)
+                .orderByDesc(ShortLinkDO::getCreateTime);
+        IPage<ShortLinkDO> resultPage = baseMapper.selectPage(shortLinkPageReqDTO,queryWrapper);
+        return resultPage.convert(each -> BeanUtil.toBean(each, ShortLinkPageRespDTO.class));
     }
 }
