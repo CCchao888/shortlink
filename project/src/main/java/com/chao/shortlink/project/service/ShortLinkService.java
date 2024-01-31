@@ -9,6 +9,8 @@ import com.chao.shortlink.project.dto.req.ShortLinkUpdateReqDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkPageRespDTO;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 import java.util.List;
 
@@ -18,6 +20,14 @@ import java.util.List;
  * Description: 短链接接口层
  */
 public interface ShortLinkService extends IService<ShortLinkDO> {
+
+    /**
+     * 短链接跳转
+     * @param shortUri
+     * @param request
+     * @param response
+     */
+    void restoreUrl(String shortUri, ServletRequest request, ServletResponse response);
 
     /**
      * 创建短链接
