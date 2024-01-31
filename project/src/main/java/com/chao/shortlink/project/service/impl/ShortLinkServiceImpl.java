@@ -68,7 +68,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         String serverName = request.getServerName();
         String fullShortUrl = serverName + "/" + shortUri;
         String originalLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
-        if(StrUtil.isBlank(originalLink)){
+        if(StrUtil.isNotBlank(originalLink)){
             ((HttpServletResponse) response).sendRedirect(originalLink);
             return;
         }
@@ -76,7 +76,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         lock.lock();
         try {
             originalLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
-            if(StrUtil.isBlank(originalLink)){
+            if(StrUtil.isNotBlank(originalLink)){
                 ((HttpServletResponse) response).sendRedirect(originalLink);
                 return;
             }
