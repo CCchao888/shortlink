@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chao.shortlink.project.dao.entity.ShortLinkDO;
 import com.chao.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.chao.shortlink.project.dto.req.RecycleBinSaveReqDTO;
+import com.chao.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.chao.shortlink.project.service.RecycleBinService;
 import lombok.RequiredArgsConstructor;
@@ -42,4 +43,18 @@ public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLin
         stringRedisTemplate.delete(String.format(GOTO_SHORT_LINK_KEY, requestParam.getFullShortUrl()));
     }
 
+    @Override
+    public IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkPageReqDTO requestParam) {
+        LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
+                .eq(ShortLinkDO::getGid, requestParam.getGid())
+                .eq(ShortLinkDO::getEnableStatus, 1)
+                .eq(ShortLinkDO::getDelFlag, 0)
+                .orderByDesc(ShortLinkDO::getCreateTime);
+        IPage<ShortLinkDO> resultPage = baseMapper.selectPage(requestParam, queryWrapper);
+        return resultPage.convert(each -> {
+            ShortLinkPageRespDTO result = BeanUtil.toBean(each, ShortLinkPageRespDTO.class);
+            result.setDomain("http://" + result.getDomain());
+            return result;
+        });
+    }
 }
