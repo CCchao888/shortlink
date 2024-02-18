@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.Week;
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.text.StrBuilder;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -277,42 +278,56 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     }
 
     @Override
-    public ShortLinkCreateRespDTO createShortLink(ShortLinkCreateReqDTO shortLinkCreateReqDTO) {
-        String shortLinkSuffix = generateSuffix(shortLinkCreateReqDTO);
-        String fullShortUrl = shortLinkCreateReqDTO.getDomain() + "/" +shortLinkSuffix;
-        ShortLinkDO shortLinkDO = BeanUtil.toBean(shortLinkCreateReqDTO, ShortLinkDO.class);
-
-        shortLinkDO.setShortUri(shortLinkSuffix);
-        shortLinkDO.setEnableStatus(0);
-        shortLinkDO.setFullShortUrl(fullShortUrl);
-        shortLinkDO.setFavicon(getFavicon(shortLinkCreateReqDTO.getOriginUrl()));
-
-        ShortLinkGotoDO shortLinkGotoDO = ShortLinkGotoDO.builder()
-                .gid(shortLinkCreateReqDTO.getGid())
+    public ShortLinkCreateRespDTO createShortLink(ShortLinkCreateReqDTO requestParam) {
+        String shortLinkSuffix = generateSuffix(requestParam);
+        String fullShortUrl = StrBuilder.create(requestParam.getDomain())
+                .append("/")
+                .append(shortLinkSuffix)
+                .toString();
+        ShortLinkDO shortLinkDO = ShortLinkDO.builder()
+                .domain(requestParam.getDomain())
+                .originUrl(requestParam.getOriginUrl())
+                .gid(requestParam.getGid())
+                .createdType(requestParam.getCreatedType())
+                .validDateType(requestParam.getValidDateType())
+                .validDate(requestParam.getValidDate())
+                .describe(requestParam.getDescribe())
+                .shortUri(shortLinkSuffix)
+                .enableStatus(0)
+                .totalPv(0)
+                .totalUv(0)
+                .totalUip(0)
                 .fullShortUrl(fullShortUrl)
+                .favicon(getFavicon(requestParam.getOriginUrl()))
                 .build();
-        try{
+        ShortLinkGotoDO linkGotoDO = ShortLinkGotoDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .gid(requestParam.getGid())
+                .build();
+        try {
             baseMapper.insert(shortLinkDO);
-            shortLinkGotoMapper.insert(shortLinkGotoDO);
-
-        }catch (DuplicateKeyException ex){
-            log.warn("短链接：{} 重复入库",shortLinkSuffix);
-            throw new ServiceException("短链接生成重复");
+            shortLinkGotoMapper.insert(linkGotoDO);
+        } catch (DuplicateKeyException ex) {
+            LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
+                    .eq(ShortLinkDO::getFullShortUrl, fullShortUrl);
+            ShortLinkDO hasShortLinkDO = baseMapper.selectOne(queryWrapper);
+            if (hasShortLinkDO != null) {
+                log.warn("短链接：{} 重复入库", fullShortUrl);
+                throw new ServiceException("短链接生成重复");
+            }
         }
         stringRedisTemplate.opsForValue().set(
-                String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),shortLinkCreateReqDTO.getOriginUrl(),
-                LinkUtil.getLinkCacheValidTime(shortLinkCreateReqDTO.getValidDate()),
-                TimeUnit.MILLISECONDS
+                String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
+                requestParam.getOriginUrl(),
+                LinkUtil.getLinkCacheValidTime(requestParam.getValidDate()), TimeUnit.MILLISECONDS
         );
-
         shortUriCreateCachePenetrationBloomFilter.add(fullShortUrl);
         return ShortLinkCreateRespDTO.builder()
-                .gid(shortLinkCreateReqDTO.getGid())
-                .originUrl(shortLinkCreateReqDTO.getOriginUrl())
                 .fullShortUrl("http://" + shortLinkDO.getFullShortUrl())
+                .originUrl(requestParam.getOriginUrl())
+                .gid(requestParam.getGid())
                 .build();
     }
-
 
 
     private String generateSuffix(ShortLinkCreateReqDTO shortLinkCreateReqDTO){
