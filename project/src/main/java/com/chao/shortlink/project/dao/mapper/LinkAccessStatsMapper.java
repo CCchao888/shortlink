@@ -21,6 +21,7 @@ public interface LinkAccessStatsMapper extends BaseMapper<LinkAccessStatsDO> {
             "uv = uv + #{linkAccessStats.uv}, " +
             " uip = uip + #{linkAccessStats.uip};")
     void shortLinkStats(@Param("linkAccessStats") LinkAccessStatsDO linkAccessStatsDO);
+
 }
 
 
