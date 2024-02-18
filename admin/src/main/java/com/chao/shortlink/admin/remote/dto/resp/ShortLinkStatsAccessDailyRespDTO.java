@@ -1,9 +1,9 @@
-package com.chao.shortlink.project.dto.resp;
+package com.chao.shortlink.admin.remote.dto.resp;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
  * Author:chao
@@ -13,15 +13,13 @@ import lombok.NoArgsConstructor;
 
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ShortLinkStatsAccessDailyRespDTO {
 
     /**
      * 日期
      */
-    private String date;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date date;
 
     /**
      * 访问量
