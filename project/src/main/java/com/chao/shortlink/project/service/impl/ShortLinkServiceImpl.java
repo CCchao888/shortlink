@@ -69,27 +69,20 @@ import static com.chao.shortlink.project.common.constant.ShortLinkConstant.AMAP_
 public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLinkDO> implements ShortLinkService {
 
     private final RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter;
-
     private final ShortLinkGotoMapper shortLinkGotoMapper;
-
     private final StringRedisTemplate stringRedisTemplate;
-
     private final RedissonClient redissonClient;
-
     private final LinkAccessStatsMapper linkAccessStatsMapper;
-
     private final LinkLocaleStatsMapper linkLocaleStatsMapper;
 
     @Value("${short-link.stats.locale.amap-key}")
     private String statsLocaleAmapKey;
 
     private final LinkOsStatsMapper linkOsStatsMapper;
-
     private final LinkBrowserStatsMapper linkBrowserStatsMapper;
-
     private final LinkAccessLogsMapper linkAccessLogsMapper;
-
     private final LinkDeviceStatsMapper linkDeviceStatsMapper;
+    private final LinkNetworkStatsMapper linkNetworkStatsMapper;
 
 
     @SneakyThrows
@@ -262,6 +255,14 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .date(new Date())
                         .build();
                 linkDeviceStatsMapper.shortLinkDeviceState(linkDeviceStatsDO);
+                LinkNetworkStatsDO linkNetworkStatsDO = LinkNetworkStatsDO.builder()
+                        .network(LinkUtil.getNetwork(((HttpServletRequest) request)))
+                        .cnt(1)
+                        .gid(gid)
+                        .fullShortUrl(fullShortUrl)
+                        .date(new Date())
+                        .build();
+                linkNetworkStatsMapper.shortLinkNetworkState(linkNetworkStatsDO);
             }
         } catch (Throwable ex) {
             log.error("短链接访问量统计异常", ex);

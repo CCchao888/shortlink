@@ -12,16 +12,15 @@ import java.util.Date;
 /**
  * Author:chao
  * Date:2024-02-18
- * Description: 访问设备统计访问实体
+ * Description: 访问网络统计访问实体
  */
 
-
 @Data
-@TableName("t_link_device_stats")
+@TableName("t_link_network_stats")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LinkDeviceStatsDO extends BaseDO {
+public class LinkNetworkStatsDO extends BaseDO {
 
     /**
      * id
@@ -49,7 +48,7 @@ public class LinkDeviceStatsDO extends BaseDO {
     private Integer cnt;
 
     /**
-     * 设备
+     * 访问网络
      */
-    private String device;
+    private String network;
 }
