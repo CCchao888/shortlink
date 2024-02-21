@@ -3,6 +3,7 @@ package com.chao.shortlink.project.config;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
+import com.chao.shortlink.project.common.constant.SentinelConstant;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +24,9 @@ public class SentinelRuleConfig implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         List<FlowRule> rules = new ArrayList<>();
         FlowRule createOrderRule = new FlowRule();
-        createOrderRule.setResource("create_short-link");
+        createOrderRule.setResource(SentinelConstant.RESOURCE_CREATE_LINK);
         createOrderRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
-        createOrderRule.setCount(1);
+        createOrderRule.setCount(5);
         rules.add(createOrderRule);
         FlowRuleManager.loadRules(rules);
     }

@@ -2,6 +2,7 @@ package com.chao.shortlink.project.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.chao.shortlink.project.common.constant.SentinelConstant;
 import com.chao.shortlink.project.common.convention.result.Result;
 import com.chao.shortlink.project.common.convention.result.Results;
 import com.chao.shortlink.project.dto.req.ShortLinkBatchCreateReqDTO;
@@ -51,8 +52,8 @@ public class ShortLinkController {
      */
     @PostMapping("/api/short-link/v1/create")
     @SentinelResource(
-            value = "create_short-link",
-            blockHandler = "createShortLinkBlockHandlerMethod",
+            value = SentinelConstant.RESOURCE_CREATE_LINK,
+            blockHandler = SentinelConstant.HANDLER_METHOD_CREATE_LINK,
             blockHandlerClass = CustomBlockHandler.class
     )
     public Result<ShortLinkCreateRespDTO> createShortLink(@RequestBody ShortLinkCreateReqDTO shortLinkCreateReqDTO){
