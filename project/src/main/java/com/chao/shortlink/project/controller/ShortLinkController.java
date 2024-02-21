@@ -50,6 +50,11 @@ public class ShortLinkController {
      * @return
      */
     @PostMapping("/api/short-link/v1/create")
+    @SentinelResource(
+            value = "create_short-link",
+            blockHandler = "createShortLinkBlockHandlerMethod",
+            blockHandlerClass = CustomBlockHandler.class
+    )
     public Result<ShortLinkCreateRespDTO> createShortLink(@RequestBody ShortLinkCreateReqDTO shortLinkCreateReqDTO){
          return Results.success(shortLinkService.createShortLink(shortLinkCreateReqDTO));
     }
@@ -60,11 +65,6 @@ public class ShortLinkController {
      * @return
      */
     @PostMapping("/api/short-link/v1/update")
-    @SentinelResource(
-            value = "create_short-link",
-            blockHandler = "createShortLinkBlockHandlerMethod",
-            blockHandlerClass = CustomBlockHandler.class
-    )
     public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO requestParam){
         shortLinkService.updateShortLink(requestParam);
         return Results.success();
