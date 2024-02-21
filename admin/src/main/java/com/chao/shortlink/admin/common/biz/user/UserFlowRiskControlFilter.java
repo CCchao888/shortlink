@@ -1,12 +1,5 @@
 package com.chao.shortlink.admin.common.biz.user;
 
-/**
- * Author:chao
- * Date:2024-02-21
- * Description:
- */
-
-
 import com.alibaba.fastjson2.JSON;
 import com.chao.shortlink.admin.common.convention.exception.ClientException;
 import com.chao.shortlink.admin.common.convention.result.Results;
@@ -29,9 +22,11 @@ import java.util.Optional;
 import static com.chao.shortlink.admin.common.convention.errorcode.BaseErrorCode.FLOW_LIMIT_ERROR;
 
 /**
- * 用户操作流量风控过滤器
- * 公众号：马丁玩编程，回复：加群，添加马哥微信（备注：link）获取项目资料
+ * Author:chao
+ * Date:2024-02-21
+ * Description: 用户操作流量风控过滤器
  */
+
 @Slf4j
 @RequiredArgsConstructor
 public class UserFlowRiskControlFilter implements Filter {
