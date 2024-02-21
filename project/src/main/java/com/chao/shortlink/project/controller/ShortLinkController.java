@@ -1,5 +1,6 @@
 package com.chao.shortlink.project.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.chao.shortlink.project.common.convention.result.Result;
 import com.chao.shortlink.project.common.convention.result.Results;
@@ -11,6 +12,7 @@ import com.chao.shortlink.project.dto.resp.ShortLinkBatchCreateRespDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkCreateRespDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.chao.shortlink.project.dto.resp.ShortLinkPageRespDTO;
+import com.chao.shortlink.project.handler.CustomBlockHandler;
 import com.chao.shortlink.project.service.ShortLinkService;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -58,6 +60,11 @@ public class ShortLinkController {
      * @return
      */
     @PostMapping("/api/short-link/v1/update")
+    @SentinelResource(
+            value = "create_short-link",
+            blockHandler = "createShortLinkBlockHandlerMethod",
+            blockHandlerClass = CustomBlockHandler.class
+    )
     public Result<Void> updateShortLink(@RequestBody ShortLinkUpdateReqDTO requestParam){
         shortLinkService.updateShortLink(requestParam);
         return Results.success();
