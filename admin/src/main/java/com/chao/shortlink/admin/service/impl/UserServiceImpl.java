@@ -114,9 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (userDO == null){
             throw new ClientException("用户不存在");
         }
-//        Boolean hasLogin = stringRedisTemplate.hasKey("login_"+userLoginReqDTO.getUsername());
-//        if(hasLogin){
-//            throw new ClientException("用户已登录");
+
         Map<Object ,Object> hasLoginMap = stringRedisTemplate.opsForHash().entries("login_" + userLoginReqDTO.getUsername());
         if (CollUtil.isNotEmpty(hasLoginMap)) {
             String token = hasLoginMap.keySet().stream()
