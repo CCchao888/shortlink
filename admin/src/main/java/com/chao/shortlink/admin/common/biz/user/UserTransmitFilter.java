@@ -70,18 +70,12 @@ public class UserTransmitFilter implements Filter {
         }
     }
 
-    private void returnJson(HttpServletResponse response, String json){
-        PrintWriter writer = null;
+    private void returnJson(HttpServletResponse response, String json) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=uft-8");
-        try{
-            writer = response.getWriter();
+        try (PrintWriter writer = response.getWriter()) {
             writer.print(json);
-        }catch (IOException ex){
-        }finally {
-            if(writer != null){
-                writer.close();
-            }
         }
     }
+
 }
