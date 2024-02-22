@@ -14,7 +14,7 @@ import com.chao.shortlink.admin.dao.mapper.GroupMapper;
 import com.chao.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import com.chao.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
 import com.chao.shortlink.admin.dto.resp.ShortLinkGroupRespDTO;
-import com.chao.shortlink.admin.remote.dto.ShortLinkRemoteService;
+import com.chao.shortlink.admin.remote.ShortLinkActualRemoteService;
 import com.chao.shortlink.admin.remote.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.chao.shortlink.admin.service.GroupService;
 import com.chao.shortlink.admin.toolkit.RandomStringUtil;
@@ -41,16 +41,12 @@ import static com.chao.shortlink.admin.common.constant.RedisCacheConstant.LOCK_G
 @RequiredArgsConstructor
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
 
+    private final ShortLinkActualRemoteService shortLinkActualRemoteService;
     private final RedissonClient redissonClient;
 
     @Value("${short-link.group.max-num}")
     private Integer groupMaxNum;
 
-    /**
-     * 后续重构为Spring cloud的feign调用
-     */
-    ShortLinkRemoteService shortLinkRemoteService = new ShortLinkRemoteService() {
-    };
 
     @Override
     public void saveGroup(String groupName) {
@@ -100,7 +96,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                 .eq(GroupDO::getUsername, UserContext.getUsername())
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUsername);
         List<GroupDO> groupDOList = baseMapper.selectList(queryWrapper);
-        Result<List<ShortLinkGroupCountQueryRespDTO>> listResult = shortLinkRemoteService.
+        Result<List<ShortLinkGroupCountQueryRespDTO>> listResult = shortLinkActualRemoteService.
                 listGroupShortLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
         List<ShortLinkGroupRespDTO> shortLinkGroupRespDTOList = BeanUtil.copyToList(groupDOList, ShortLinkGroupRespDTO.class);
         shortLinkGroupRespDTOList.forEach(each -> {
