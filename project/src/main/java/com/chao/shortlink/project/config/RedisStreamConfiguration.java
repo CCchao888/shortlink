@@ -37,6 +37,10 @@ public class RedisStreamConfiguration {
     @Value("${spring.data.redis.channel-topic.short-link-stats-group}")
     private String group;
 
+    /**
+     * 线程池执行异步从 Redis Stream 中拉取消息的任务
+     * @return
+     */
     @Bean
     public ExecutorService asyncStreamConsumer() {
         AtomicInteger index = new AtomicInteger();
@@ -55,6 +59,11 @@ public class RedisStreamConfiguration {
         );
     }
 
+    /**
+     * 消息监听容器会自动监听指定 Redis Stream 中的消息，并在消息到达时调用指定的消费者进行处理。
+     * @param asyncStreamConsumer
+     * @return
+     */
     @Bean(initMethod = "start", destroyMethod = "stop")
     public StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer(ExecutorService asyncStreamConsumer) {
         StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> options =
