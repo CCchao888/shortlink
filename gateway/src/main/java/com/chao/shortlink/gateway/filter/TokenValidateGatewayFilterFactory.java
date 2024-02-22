@@ -30,8 +30,10 @@ import java.util.Objects;
 @Component
 public class TokenValidateGatewayFilterFactory extends AbstractGatewayFilterFactory<Config> {
 
+
     private final StringRedisTemplate stringRedisTemplate;
 
+    // TODO 奇怪的错误
     public TokenValidateGatewayFilterFactory(StringRedisTemplate stringRedisTemplate) {
         super(Config.class);
         this.stringRedisTemplate = stringRedisTemplate;
