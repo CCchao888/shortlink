@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.chao.shortlink.admin.common.constant.RedisCacheConstant.LOCK_REGISTER_KEY;
+import static com.chao.shortlink.admin.common.constant.RedisCacheConstant.USER_LOGIN_KEY;
 
 /**
  * Author:chao
@@ -116,7 +117,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             throw new ClientException("用户不存在");
         }
 
-        Map<Object ,Object> hasLoginMap = stringRedisTemplate.opsForHash().entries("login_" + userLoginReqDTO.getUsername());
+        Map<Object ,Object> hasLoginMap = stringRedisTemplate.opsForHash().entries(USER_LOGIN_KEY + userLoginReqDTO.getUsername());
         if (CollUtil.isNotEmpty(hasLoginMap)) {
             String token = hasLoginMap.keySet().stream()
                     .findFirst()
@@ -126,20 +127,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
         String uuid = UUID.randomUUID().toString();
         // 将token缓存到redis
-        stringRedisTemplate.opsForHash().put("login_"+userLoginReqDTO.getUsername(),uuid, JSON.toJSONString(userDO));
-        stringRedisTemplate.expire("login_"+userLoginReqDTO.getUsername(), 20, TimeUnit.DAYS);
+        stringRedisTemplate.opsForHash().put(USER_LOGIN_KEY + userLoginReqDTO.getUsername(),uuid, JSON.toJSONString(userDO));
+        stringRedisTemplate.expire(USER_LOGIN_KEY + userLoginReqDTO.getUsername(), 20, TimeUnit.DAYS);
         return new UserLoginRespDTO(uuid);
     }
 
     @Override
     public Boolean checkLogin(String username, String token) {
-        return stringRedisTemplate.opsForHash().get("login_"+username,token) != null;
+        return stringRedisTemplate.opsForHash().get(USER_LOGIN_KEY + username,token) != null;
     }
 
     @Override
     public void logOut(String username, String token) {
         if(checkLogin(username, token)){
-            stringRedisTemplate.delete("login_"+username);
+            stringRedisTemplate.delete(USER_LOGIN_KEY + username);
         }else {
             throw new ClientException("用户未登录或者用户token不存在");
         }
