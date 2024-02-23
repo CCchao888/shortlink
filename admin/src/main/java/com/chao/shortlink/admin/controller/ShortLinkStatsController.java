@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 
-@RestController
+@RestController(value = "shortLinkStatsControllerByAdmin")
 @RequiredArgsConstructor
 public class ShortLinkStatsController {
 
